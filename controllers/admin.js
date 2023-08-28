@@ -1,6 +1,5 @@
 
 const Product = require('../models/product');
-const Cart = require('../models/cart');
 
 
 exports.getAddProduct = (req, res, next) => {
@@ -18,19 +17,13 @@ exports.postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
-  Product.create({
-    title: title,
-    description: description,
-    imageUrl: imageUrl,
-    price: price,
-  }).then(result=>{
+  let product = new Product(title, description, price, imageUrl);
+  product.save().then(result=>{
     console.log('Product Created!');
     res.redirect('/admin/products');
-
   }).catch(err=>{
     console.log("Error Creating Proudct: ", err);
   });
-
   
 };
 
