@@ -31,7 +31,7 @@ exports.getEditProduct = (req, res, next) => {
   const productID = req.query.productID;
   if (productID) {
     console.log("Product ID: ", productID);
-    Product.fetchOne(productID).then(product => {
+    Product.findById(productID).then(product => {
       if (product) {
         res.render('admin/edit-product', {
           pageTitle: 'Edit Product',
@@ -61,7 +61,7 @@ exports.postEditProduct = (req, res, next) => {
   const newImgUrl = req.body.imageUrl;
   const newPrice = req.body.price;
   const newDesc = req.body.description;
-  product = new Product(productID, newTitle, newDesc, newPrice, newImgUrl);
+  const product = new Product(productID, newTitle, newDesc, newPrice, newImgUrl);
   product.save().then(result => {
     console.log("Product Updated!");
     res.redirect('/admin/products')
@@ -72,14 +72,14 @@ exports.postEditProduct = (req, res, next) => {
 exports.postDeleteProduct = (req, res, next) => {
   const productID = req.body.productID;
   console.log('deletion id: ', productID);
-  Product.deleteOne(productID).then(result => {
+  Product.deleteById(productID).then(result => {
     console.log("Product Deleted!");
     res.redirect('/admin/products');
   }).catch(err => { console.log(err) });
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll().then(products => {
+  Product.findAll().then(products => {
     res.render('admin/products', {
       prods: products,
       pageTitle: 'Admin Products',
