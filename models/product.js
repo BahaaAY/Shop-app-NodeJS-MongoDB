@@ -32,6 +32,14 @@ class Product {
       }
     );
   }
+  static deleteOne(productID) {
+    const db = getDb();
+    return db.collection('products').deleteOne(
+      {
+        _id: new mongodb.ObjectId(productID),
+      }
+    );
+  }
 }
 
 

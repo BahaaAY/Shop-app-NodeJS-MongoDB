@@ -18,22 +18,21 @@ exports.postAddProduct = (req, res, next) => {
   const price = req.body.price;
   const description = req.body.description;
   let product = new Product(title, description, price, imageUrl);
-  product.save().then(result=>{
+  product.save().then(result => {
     console.log('Product Created!');
     res.redirect('/admin/products');
-  }).catch(err=>{
+  }).catch(err => {
     console.log("Error Creating Proudct: ", err);
   });
-  
+
 };
 
 exports.getEditProduct = (req, res, next) => {
   const productID = req.query.productID;
   if (productID) {
     console.log("Product ID: ", productID);
-    Product.fetchOne(productID).then(product=>{
-      if(product)
-      {
+    Product.fetchOne(productID).then(product => {
+      if (product) {
         res.render('admin/edit-product', {
           pageTitle: 'Edit Product',
           path: '/admin/edit-product',
@@ -41,11 +40,11 @@ exports.getEditProduct = (req, res, next) => {
           productCSS: true,
           product: product
         });
-      }else{
+      } else {
         res.redirect('/');
       }
 
-    }).catch(err=>{
+    }).catch(err => {
       console.log(err);
     });
 
@@ -63,24 +62,20 @@ exports.postEditProduct = (req, res, next) => {
   const newPrice = req.body.price;
   const newDesc = req.body.description;
   product = new Product(productID, newTitle, newDesc, newPrice, newImgUrl);
-  product.save().then(result=>{
+  product.save().then(result => {
     console.log("Product Updated!");
     res.redirect('/admin/products')
-  }).catch(err=>{console.log(err)});
+  }).catch(err => { console.log(err) });
 };
 
 
 exports.postDeleteProduct = (req, res, next) => {
   const productID = req.body.productID;
-  console.log('deletion id: ' , productID);
-  Product.fetchOne(productID).then(product=>{
-    return product.destroy();
-  }).then(result=>{
+  console.log('deletion id: ', productID);
+  Product.deleteOne(productID).then(result => {
     console.log("Product Deleted!");
     res.redirect('/admin/products');
-  }).catch(err=>{
-    console.log("Deletion Error: ", err);
-  })
+  }).catch(err => { console.log(err) });
 };
 
 exports.getProducts = (req, res, next) => {
@@ -90,7 +85,7 @@ exports.getProducts = (req, res, next) => {
       pageTitle: 'Admin Products',
       path: '/admin/products'
     });
-  }).catch(err=>{
+  }).catch(err => {
     console.log(err);
   });
 };
