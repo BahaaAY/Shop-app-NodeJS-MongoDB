@@ -1,7 +1,8 @@
 const mongodb = require('mongodb');
 const getDb = require('../util/database').getDb;
 class Product {
-  constructor(title, description, price, imageUrl) {
+  constructor(_id, title, description, price, imageUrl) {
+    this._id = _id;
     this.title = title;
     this.description = description;
     this.price = price;
@@ -9,7 +10,15 @@ class Product {
   }
   save() {
     const db = getDb();
-    return db.collection('products').insertOne(this);
+    if(this._id)
+    {
+      console.log("Updating Product: ", this._id);
+      //Update Existing Product
+      return db.collection('products').updateOne({_id: new mongodb.ObjectId(this._id)},{$set: {title: this.title, description: this.description, price: this.price, imageUrl: this.imageUrl}});
+    }else{
+      //Add New Product
+      return db.collection('products').insertOne(this);
+    }
   }
   static fetchAll() {
     const db = getDb();
