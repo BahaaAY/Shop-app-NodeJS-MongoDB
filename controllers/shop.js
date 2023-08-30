@@ -41,67 +41,35 @@ exports.getIndex = (req, res, next) => {
 exports.getCart = (req, res, next) => {
   req.user.getCart().then(cart => {
     console.log("UserCart: ", cart);
-    return cart.getProducts().then(cartProducts => {
-      const total = calculateTotal(cartProducts);
-      res.render('shop/cart', {
-        path: '/cart',
-        pageTitle: 'Your Cart',
-        cartProducts: cartProducts,
-        cartTotal: total,
-
-      });
-
-    }).catch(err => {
-      console.log("Error Getting Cart Products! ", err);
+    res.render('shop/cart', {
+      path: '/cart',
+      pageTitle: 'Your Cart',
+      cartProducts: cart.items,
+      cartTotal: cart.totalPrice,
     });
 
   }).catch(err => {
     console.log("Error Getting Cart!: ", err);
   });
-
 };
+
+
 exports.postAddToCart = (req, res, next) => {
   const productID = req.body.productID;
   const user = new User(req.user.username, req.user.email, req.user.cart,req.user._id);
   Product.findById(productID)
   .then(
     product => {
+      
       return user.addToCart(product);
     }
   ).then(
     result => {
       console.log("Product Added to Cart!");
+      res.redirect('/cart');
     }
   ).catch(err => console.log("Product Not Found: ", err));
-
-//   let fetchedCart;
-//   var newQuantity = 1;
-//   req.user.getCart().then(cart => {
-//     fetchedCart = cart;
-//     //check if product already exists?
-//     return cart.getProducts({ where: { id: productID } });
-//   }).then(products => {
-//     if (products.length > 0) //product exists in cart
-//     {
-//       // Increase existing product quantity
-//       newQuantity = products[0].cartItem.quantity + 1;
-
-//     }
-
-//     return Product.findByPk(productID); // Get Product
-
-
-//   }).then((product) => {
-//     // check if product is a valid product
-//     if (product) {
-//       return fetchedCart.addProduct(product, { through: { quantity: newQuantity } });
-//     }
-//   }).then(() => {
-//     res.redirect('/cart');
-//   }).catch(err => {
-//     console.log("Error Getting Cart!: ", err);
-//   });
-// };
+};
 
 // exports.deleteCartItem = (req, res, next) => {
 
@@ -131,8 +99,6 @@ exports.postAddToCart = (req, res, next) => {
 //     });
 //   }).catch(err => { console.log("Error: ", err); });
 
-
-};
 
 exports.postOrder = (req, res, next) => {
   let user = req.user;  // Get User

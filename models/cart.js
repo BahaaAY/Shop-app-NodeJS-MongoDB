@@ -1,13 +1,8 @@
-const Sequelize = require('sequelize');
-const sequelize = require('../util/database');
+class Cart {
+    constructor(items, totalPrice){
+        this.items = items;
+        this.totalPrice = totalPrice;
+    }
 
-const Cart = sequelize.define('cart',{
-    id:{
-        type: Sequelize.INTEGER,
-        autoIncrement: true,
-        allowNull: false,
-        primaryKey: true,
-    },
-
-});
+}
 module.exports = Cart;

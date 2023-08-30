@@ -26,6 +26,7 @@ app.use((req, res, next) => {
             if(user)
             {
                 console.log("User: ", user);
+                user = new User(user.username, user.email, user.cart, user._id);
                 req.user = user;
                 next();
             }else
