@@ -1,7 +1,7 @@
-const mongodb = require('mongodb');
-const getDb = require('../util/database').getDb;
+const mongodb = require("mongodb");
+const getDb = require("../util/database").getDb;
 class Product {
-  constructor(title, description, price, imageUrl,_id, userID) {
+  constructor(title, description, price, imageUrl, _id, userID) {
     this._id = _id ? new mongodb.ObjectId(_id) : null;
     this.title = title;
     this.description = description;
@@ -11,37 +11,33 @@ class Product {
   }
   save() {
     const db = getDb();
-    if(this._id)
-    {
+    if (this._id) {
       console.log("Updating Product: ", this._id);
       //Update Existing Product
-      return db.collection('products').updateOne({_id: new mongodb.ObjectId(this._id)},{$set: this});
-    }else{
+      return db
+        .collection("products")
+        .updateOne({ _id: new mongodb.ObjectId(this._id) }, { $set: this });
+    } else {
       //Add New Product
-      return db.collection('products').insertOne(this);
+      return db.collection("products").insertOne(this);
     }
   }
   static findAll() {
     const db = getDb();
-    return db.collection('products').find().toArray();
+    return db.collection("products").find().toArray();
   }
   static findById(productID) {
     const db = getDb();
-    return db.collection('products').findOne(
-      {
-        _id: new mongodb.ObjectId(productID),
-      }
-    );
+    return db.collection("products").findOne({
+      _id: new mongodb.ObjectId(productID),
+    });
   }
   static deleteById(productID) {
     const db = getDb();
-    return db.collection('products').deleteOne(
-      {
-        _id: new mongodb.ObjectId(productID),
-      }
-    );
+    return db.collection("products").deleteOne({
+      _id: new mongodb.ObjectId(productID),
+    });
   }
 }
-
 
 module.exports = Product;
