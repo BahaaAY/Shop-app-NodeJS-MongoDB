@@ -40,7 +40,8 @@ exports.getIndex = (req, res, next) => {
 
 exports.getCart = (req, res, next) => {
   req.user.getCart().then(cart => {
-    console.log("UserCart: ", cart);
+    //console.log("UserCart: ", cart);
+    console.log("---------- Cart Items: ", cart.items);
     res.render('shop/cart', {
       path: '/cart',
       pageTitle: 'Your Cart',
@@ -65,30 +66,21 @@ exports.postAddToCart = (req, res, next) => {
     }
   ).then(
     result => {
-      console.log("Product Added to Cart!");
+      console.log("Product Ad~ded to Cart!");
       res.redirect('/cart');
     }
   ).catch(err => console.log("Product Not Found: ", err));
 };
 
-// exports.deleteCartItem = (req, res, next) => {
+exports.postDeleteCartItem = (req, res, next) => {
 
-//   const productID = req.body.productID;
-//   req.user.getCart().then(cart => {
-//     return cart.getProducts({ where: { id: productID } });
-//   }
-
-//   ).then(products => {
-//     if (products.length > 0) { // Check if Product Exists in Cart
-//       return products[0].cartItem.destroy();  // Delete Cart Item
-//     } else {
-//       console.log("Product Not Found!");
-//       Promise.resolve();
-//     }
-//   }).then(() => {
-//     res.redirect('/cart');
-//   }).catch(err => { console.log("Error: ", err); });
-// };
+  const productID = req.body.productID;
+  console.log("ProductID del: ", productID);
+  req.user.deleteCartItem(productID).then(result => {
+    console.log("Product Deleted from Cart!: ", productID);
+    res.redirect('/cart');
+  }).catch(err => { console.log("Error: ", err); });
+};
 
 // exports.getOrders = (req, res, next) => {
 //   req.user.getOrders({ include: ['products'] }).then(orders => {

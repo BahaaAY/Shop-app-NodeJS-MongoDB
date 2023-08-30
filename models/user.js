@@ -37,6 +37,27 @@ class User {
         
         return db.collection('users').updateOne({_id: new mongodb.ObjectId(this._id)},{$set: {cart: updatedCart}});
     }
+    updateCart(cart)
+    {
+        const db = getDb();
+        var updatedCartItems = [...cart.items];
+        updatedCartItems = updatedCartItems.map(item =>{
+            return {productID: new mongodb.ObjectId(item.productID), quantity: item.quantity};
+        });
+        cart = {items: updatedCartItems};
+        return db.collection('users').updateOne({_id: new mongodb.ObjectId(this._id)},{$set: {cart: cart}});
+
+    }
+    deleteCartItem(productID)
+    {
+        const db = getDb();
+        var updatedCartItems = [...this.cart.items];
+        updatedCartItems = updatedCartItems.filter(item =>{
+            return item.productID.toString() !== productID.toString();
+        });
+        this.cart.items = updatedCartItems;
+        return db.collection('users').updateOne({_id: new mongodb.ObjectId(this._id)},{$set: {cart: this.cart}});
+    }
     getCart(){
         const db = getDb();
         // Get Products in Cart
@@ -47,7 +68,7 @@ class User {
         .then(products=>{
             var total = 0;
             
-            // map products to cart items: Product ==> CarItem{Product, Quantity}
+            // map products to cart items: Product ==> CarItem{Product{_id,title,description,price,imgUrl}, Quantity}
             let cartProducts = products.map(product =>{
                 return {...product, quantity: this.cart.items.find(item =>{
                     return item.productID.toString() === product._id.toString();
