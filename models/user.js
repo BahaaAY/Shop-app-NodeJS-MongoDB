@@ -1,6 +1,8 @@
 const mongodb =require('mongodb');
 const getDb = require('../util/database').getDb;
 
+const Cart = require('./cart');
+
 class User {
     constructor(username, email, cart, id) {
         this.username = username;
@@ -34,6 +36,32 @@ class User {
         const updatedCart = {items: updatedCartItems};
         
         return db.collection('users').updateOne({_id: new mongodb.ObjectId(this._id)},{$set: {cart: updatedCart}});
+    }
+    getCart(){
+        const db = getDb();
+        // Get Products in Cart
+        const productsIDs = this.cart.items.map(item =>{
+            return item.productID;
+        });
+        return db.collection('products').find({_id: {$in: productsIDs}}).toArray()
+        .then(products=>{
+            var total = 0;
+            
+            // map products to cart items: Product ==> CarItem{Product, Quantity}
+            let cartProducts = products.map(product =>{
+                return {...product, quantity: this.cart.items.find(item =>{
+                    return item.productID.toString() === product._id.toString();
+                }).quantity};
+            });
+
+            // calculate total price
+            cartProducts.forEach(product =>{
+                total += product.price * product.quantity;
+            });
+            return new Cart(cartProducts, total);
+
+        }).catch(err => console.log("Error Getting Cart Products: ", err));
+
     }
     static findById(userID) {
         const db = getDb();
