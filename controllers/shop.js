@@ -41,7 +41,6 @@ exports.getIndex = (req, res, next) => {
 exports.getCart = (req, res, next) => {
   req.user.getCart().then(cart => {
     //console.log("UserCart: ", cart);
-    console.log("---------- Cart Items: ", cart.items);
     res.render('shop/cart', {
       path: '/cart',
       pageTitle: 'Your Cart',
@@ -66,7 +65,7 @@ exports.postAddToCart = (req, res, next) => {
     }
   ).then(
     result => {
-      console.log("Product Ad~ded to Cart!");
+      console.log("Product Added to Cart!");
       res.redirect('/cart');
     }
   ).catch(err => console.log("Product Not Found: ", err));
@@ -82,44 +81,21 @@ exports.postDeleteCartItem = (req, res, next) => {
   }).catch(err => { console.log("Error: ", err); });
 };
 
-// exports.getOrders = (req, res, next) => {
-//   req.user.getOrders({ include: ['products'] }).then(orders => {
-//     res.render('shop/orders', {
-//       path: '/orders',
-//       pageTitle: 'Your Orders',
-//       orders: orders,
-//     });
-//   }).catch(err => { console.log("Error: ", err); });
-
+exports.getOrders = (req, res, next) => {
+  req.user.getOrders().then(orders => {
+    res.render('shop/orders', {
+      path: '/orders',
+      pageTitle: 'Your Orders',
+      orders: orders,
+    });
+  }).catch(err => { console.log("Error: ", err); });
+};
 
 exports.postOrder = (req, res, next) => {
   let user = req.user;  // Get User
-  let fetchedCart;
-  let cartProducts;
-  user.getCart().then(  // Get User Cart
-    cart => {
-      fetchedCart = cart;
-      return fetchedCart.getProducts(); // Get Cart Products
-    }
-  ).then(
-    products => {
-      cartProducts = products;
-      return user.createOrder({ total: calculateTotal(products) }); // Create Order
-    }
-  ).then(
-    order => {
-
-      return order.addProducts(cartProducts.map(product => {  // Add Products to Order
-        product.orderItem = { quantity: product.cartItem.quantity };  // Add Quantity to OrderItem
-        return product;
-      }));
-    }
-
-  ).then(() => {
-    return fetchedCart.setProducts(null); // Empty Cart
-  }).then(() => {
-    console.log("Order Created!");
-    res.redirect('/orders');  // Redirect to Orders Page
+  user.addOrder().then(result => {
+    console.log("Order Added!");
+    res.redirect('/orders');
   }).catch(err => { console.log("Error: ", err); });
 }
 

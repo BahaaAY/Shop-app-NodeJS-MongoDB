@@ -10,19 +10,19 @@
                 <% orders.forEach(order => {%>
                     <div class="card">
                         <div class="card__header">
-                            Order ID: <%= order.id %>
+                            Order ID: <%= order._id %>
                         </div>
                         <div class="card__content ">
                             <ul>
-                                <% order.products.forEach(product => { %>
+                                <% order.items.forEach(product => { %>
                                 <li>
-                                    <%= product.title %> - <%= product.quantity %> x $ <%= product.price %>
+                                    <%= product.title %> (<%= product.quantity %>) x $ <%= product.price %>
                                 </li>
                                 <% }) %>
                             </ul>
                         </div>
                         <div class="card__content ">
-                            <strong>Total Price: $ <%= order.total %></strong>
+                            <strong>Total Price: $ <%= order.totalPrice %></strong>
                         </div>
                     </div>
                     <hr>
